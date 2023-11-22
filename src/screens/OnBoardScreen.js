@@ -1,5 +1,5 @@
-import React from 'react';
-import {Text, StyleSheet, View, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Text, StyleSheet, View, Image, ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../constants/Theme';
 import {PrimaryButton} from '../components/Button';
@@ -29,7 +29,7 @@ const OnBoardScreen = ({navigation}) => {
               textAlign: 'center',
               color: colors.grey,
             }}>
-            We help you to find best and affordable products
+            We help you to find best and affordable services
           </Text>
         </View>
         <View style={style.indicatorContainer}>
@@ -64,7 +64,7 @@ const style = StyleSheet.create({
     height: 12,
     width: 30,
     borderRadius: 10,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.green,
     marginHorizontal: 5,
   },
   indicator: {

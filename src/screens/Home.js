@@ -21,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import {colors} from '../constants/Theme';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchData} from '../redux/slices/dataSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width} = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
@@ -29,7 +30,7 @@ const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {data, status, error} = useSelector(state => state.data);
-  console.log('data', data);
+  // console.log('data', data);
 
   const openDrawer = () => {
     navigation.openDrawer();
@@ -38,6 +39,8 @@ const Home = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
+  const [modal, setModal] = useState(false);
+  const toggleProfile = () => [setModal(!modal)];
 
   const categoriesArray = [
     {
@@ -120,6 +123,18 @@ const Home = () => {
     fetchDataAndSetLoading();
   }, [dispatch]);
 
+  // Function to delete user session data from AsyncStorage
+  const LogoutSession = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      setModal(!modal);
+      ToastAndroid.show('Logged Out', ToastAndroid.SHORT);
+      navigation.navigate('BoardScreen');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const renderItem = ({item}) => (
     <View style={style.categoryItem}>
       <View style={style.imageBorder}>
@@ -158,7 +173,7 @@ const Home = () => {
       <TouchableOpacity
         underlayColor={colors.white}
         activeOpacity={0.9}
-        onPress={() => navigation.navigate('DetailsScreen')}>
+        onPress={() => navigation.navigate('DetailsScreen', serviceProvider)}>
         <View style={style.card}>
           <View style={{alignItems: 'center'}}>
             <Image
@@ -218,14 +233,6 @@ const Home = () => {
       <View style={style.header}>
         <View>
           <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity
-              style={{
-                marginRight: 5,
-                justifyContent: 'center',
-              }}
-              onPress={openDrawer}>
-              {myIcon}
-            </TouchableOpacity>
             <Text style={{fontSize: 28}}>Hello,</Text>
             <Text style={{fontSize: 28, fontWeight: 'bold', marginLeft: 10}}>
               Piyush
@@ -235,7 +242,7 @@ const Home = () => {
             What do you want today
           </Text>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toggleProfile}>
           <Image
             source={require('../assets/images/person.png')}
             style={{height: 50, width: 50, borderRadius: 25}}
@@ -270,6 +277,46 @@ const Home = () => {
         )}
         renderItem={({item}) => <Card serviceProvider={item} />}
       />
+
+      {/* Modal for profile  */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modal}
+        onRequestClose={() => {
+          setModal(!modal);
+        }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginHorizontal: 35,
+            marginVertical: 310,
+            backgroundColor: colors.white,
+            borderRadius: 20,
+            borderColor: colors.primary,
+            borderWidth: 2,
+            elevation: 5,
+          }}>
+          <TouchableOpacity onPress={LogoutSession}>
+            <Text
+              style={{
+                fontSize: 20,
+                color: colors.white,
+                fontWeight: '600',
+                backgroundColor: colors.primary,
+                height: 40,
+                width: 90,
+                borderRadius: 30,
+                textAlign: 'center',
+                paddingVertical: 5,
+              }}>
+              Log Out
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

@@ -12,7 +12,8 @@ import {colors} from '../constants/Theme';
 import UserIcon from 'react-native-vector-icons/FontAwesome5';
 import LockIcon from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
-// import { useForm, Controller } from "react-hook-form";
+import {useForm, Controller} from 'react-hook-form';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,39 +22,39 @@ export default function LoginPage() {
   const apiUrl =
     'https://wme-staging-backend.herokuapp.com/api/v1/executives/getExecutiveLogin';
 
-  //   const handleLogin = async (formData) => {
-  //     setIsLoading(true);
-  //     fetch(`${apiUrl}?mobile=${formData.mobile}&password=${formData.password}`)
-  //       .then((response) => {
-  //         setIsLoading(false);
-  //         if (response.ok) {
-  //           return response.json();
-  //         } else {
-  //           throw new Error("Wrong Credentials");
-  //         }
-  //       })
-  //       .then((data) => {
-  //         ToastAndroid.show("Successfully Logged In", ToastAndroid.SHORT);
-  //         console.log(data);
-  //         AsyncStorage.setItem("token", data.token);
-  //         navigation.navigate("Home");
-  //       })
-  //       .catch((error) => {
-  //         console.error(error);
-  //       });
-  //   };
+  const handleLogin = async formData => {
+    setIsLoading(true);
+    fetch(`${apiUrl}?mobile=${formData.mobile}&password=${formData.password}`)
+      .then(response => {
+        setIsLoading(false);
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Wrong Credentials');
+        }
+      })
+      .then(data => {
+        ToastAndroid.show('Successfully Logged In', ToastAndroid.SHORT);
+        console.log(data);
+        AsyncStorage.setItem('token', data.token);
+        navigation.navigate('Home');
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
   // form
-  //   const {
-  //     control,
-  //     handleSubmit,
-  //     formState: { errors },
-  //   } = useForm({
-  //     defaultValues: {
-  //       mobile: "",
-  //       password: "",
-  //     },
-  //   });
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {
+      mobile: '',
+      password: '',
+    },
+  });
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign in</Text>
@@ -124,7 +125,7 @@ export default function LoginPage() {
           }}>
           {ToastAndroid.show('Please Wait...', ToastAndroid.SHORT)}
           <Text>Please wait...</Text>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={colors.green} />
         </View>
       )}
     </View>
@@ -154,10 +155,11 @@ const styles = StyleSheet.create({
   },
   input: {
     marginLeft: 20,
+    padding: 5,
     backgroundColor: colors.lighterGrey,
   },
   button: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.green,
     width: '80%',
     height: 48,
     borderRadius: 20,

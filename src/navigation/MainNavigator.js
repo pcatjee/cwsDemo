@@ -1,4 +1,3 @@
-import {View, Text} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -14,8 +13,8 @@ const AppStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} />
-
       <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
+      <Stack.Screen name="DrawerStack" component={DrawerStack} />
     </Stack.Navigator>
   );
 };
@@ -30,7 +29,6 @@ const DrawerStack = () => {
           headerShown: false,
         }}
       />
-      <Drawer.Screen name="AppStack" component={AppStack} />
     </Drawer.Navigator>
   );
 };
@@ -38,7 +36,7 @@ const DrawerStack = () => {
 const MainNavigator = () => {
   return (
     <NavigationContainer>
-      <DrawerStack />
+      <AppStack />
     </NavigationContainer>
   );
 };
